@@ -11,7 +11,7 @@ const TITLE = getConfig("Title");
     Copyright © 2020-present
     <a
       class="hover:text-primary"
-      href="https://github.com/pure-admin"
+      href="http://www.chindeo.com/"
       target="_blank"
     >
       &nbsp;{{ TITLE }}
