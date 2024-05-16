@@ -12,6 +12,7 @@ import { bg, avatar, illustration } from "./utils/static";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import { ref, reactive, toRaw, onMounted, onBeforeUnmount } from "vue";
 import { useDataThemeChange } from "@/layout/hooks/useDataThemeChange";
+import { getCaptchaImage } from "@/api/user";
 
 import dayIcon from "@/assets/svg/day.svg?component";
 import darkIcon from "@/assets/svg/dark.svg?component";
@@ -24,6 +25,7 @@ defineOptions({
 const router = useRouter();
 const loading = ref(false);
 const ruleFormRef = ref<FormInstance>();
+const imgCode = ref("");
 
 const { initStorage } = useLayout();
 initStorage();
@@ -34,7 +36,9 @@ const { title } = useNav();
 
 const ruleForm = reactive({
   username: "admin",
-  password: "admin123"
+  password: "admin123",
+  code: "",
+  uuid: ""
 });
 
 const onLogin = async (formEl: FormInstance | undefined) => {
@@ -43,9 +47,9 @@ const onLogin = async (formEl: FormInstance | undefined) => {
     if (valid) {
       loading.value = true;
       useUserStoreHook()
-        .loginByUsername({ username: ruleForm.username, password: "admin123" })
+        .loginByUsername(ruleForm)
         .then(res => {
-          if (res.success) {
+          if (res.code === 200) {
             // 获取后端路由
             return initRouter().then(() => {
               router.push(getTopMenu(true).path).then(() => {
@@ -53,12 +57,22 @@ const onLogin = async (formEl: FormInstance | undefined) => {
               });
             });
           } else {
+            getCaptImage();
             message("登录失败", { type: "error" });
           }
         })
         .finally(() => (loading.value = false));
     }
   });
+};
+
+const getCaptImage = async () => {
+  const res = await getCaptchaImage();
+
+  if (res.code === 200) {
+    imgCode.value = "data:image/gif;base64," + res.data.img;
+    ruleForm.uuid = res.data.uuid;
+  }
 };
 
 /** 使用公共函数，避免`removeEventListener`失效 */
@@ -70,6 +84,7 @@ function onkeypress({ code }: KeyboardEvent) {
 
 onMounted(() => {
   window.document.addEventListener("keypress", onkeypress);
+  getCaptImage();
 });
 
 onBeforeUnmount(() => {
@@ -136,6 +151,25 @@ onBeforeUnmount(() => {
                   placeholder="密码"
                   :prefix-icon="useRenderIcon(Lock)"
                 />
+              </el-form-item>
+            </Motion>
+            <Motion :delay="200">
+              <el-form-item prop="code">
+                <el-input
+                  v-model="ruleForm.code"
+                  clearable
+                  placeholder="验证码"
+                  :prefix-icon="useRenderIcon('ri:shield-keyhole-line')"
+                >
+                  <template v-slot:append>
+                    <img
+                      class="CaptImage"
+                      :src="imgCode"
+                      style=" max-width: 120px;height: 40px"
+                      @click="getCaptImage"
+                    />
+                  </template>
+                </el-input>
               </el-form-item>
             </Motion>
 

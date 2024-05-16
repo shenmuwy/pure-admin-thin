@@ -212,6 +212,11 @@ function initRouter() {
   } else {
     return new Promise(resolve => {
       getAsyncRoutes().then(({ data }) => {
+        data.map(item => {
+          if (item.name.includes("gitee")) {
+            item.path = "/gitee";
+          }
+        });
         handleAsyncRoutes(cloneDeep(data));
         resolve(router);
       });

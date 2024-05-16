@@ -27,6 +27,7 @@ export const useUserStore = defineStore({
     nickname: storageLocal().getItem<DataInfo<number>>(userKey)?.nickname ?? "",
     // 页面级别权限
     roles: storageLocal().getItem<DataInfo<number>>(userKey)?.roles ?? [],
+    verifyCode: "",
     // 是否勾选了登录页的免登录
     isRemembered: false,
     // 登录页的免登录存储几天，默认7天
@@ -49,6 +50,10 @@ export const useUserStore = defineStore({
     SET_ROLES(roles: Array<string>) {
       this.roles = roles;
     },
+    /** 存储前端生成的验证码 */
+    SET_VERIFYCODE(verifyCode: string) {
+      this.verifyCode = verifyCode;
+    },
     /** 存储是否勾选了登录页的免登录 */
     SET_ISREMEMBERED(bool: boolean) {
       this.isRemembered = bool;
@@ -62,7 +67,7 @@ export const useUserStore = defineStore({
       return new Promise<UserResult>((resolve, reject) => {
         getLogin(data)
           .then(data => {
-            if (data?.success) setToken(data.data);
+            if (data?.code === 200) setToken(data.data);
             resolve(data);
           })
           .catch(error => {

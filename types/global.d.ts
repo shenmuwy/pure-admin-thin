@@ -83,6 +83,8 @@ declare global {
    * @see {@link https://pure-admin.github.io/pure-admin-doc/pages/config/#platform-config-json}
    */
   interface PlatformConfigs {
+    RequestUrl?: string;
+    PrefixUrl?: string;
     Version?: string;
     Title?: string;
     FixedHeader?: boolean;
@@ -190,5 +192,14 @@ declare global {
       circle?: boolean;
       touched?: boolean;
     };
+  }
+
+  /**
+   * 响应结果
+   */
+  interface ResData {
+    code?: number;
+    message?: string;
+    data?: Object;
   }
 }

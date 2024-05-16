@@ -4,11 +4,13 @@ import { useUserStoreHook } from "@/store/modules/user";
 
 export interface DataInfo<T> {
   /** token */
-  accessToken: string;
+  token: string;
+  /** token */
+  accessToken?: string;
   /** `accessToken`的过期时间（时间戳） */
-  expires: T;
+  expires?: T;
   /** 用于调用刷新accessToken的接口时所需的token */
-  refreshToken: string;
+  refreshToken?: string;
   /** 头像 */
   avatar?: string;
   /** 用户名 */
@@ -32,6 +34,7 @@ export const multipleTabsKey = "multiple-tabs";
 /** 获取`token` */
 export function getToken(): DataInfo<number> {
   // 此处与`TokenKey`相同，此写法解决初始化时`Cookies`中不存在`TokenKey`报错
+
   return Cookies.get(TokenKey)
     ? JSON.parse(Cookies.get(TokenKey))
     : storageLocal().getItem(userKey);
@@ -45,10 +48,10 @@ export function getToken(): DataInfo<number> {
  */
 export function setToken(data: DataInfo<Date>) {
   let expires = 0;
-  const { accessToken, refreshToken } = data;
+  const { token, refreshToken } = data;
   const { isRemembered, loginDay } = useUserStoreHook();
   expires = new Date(data.expires).getTime(); // 如果后端直接设置时间戳，将此处代码改为expires = data.expires，然后把上面的DataInfo<Date>改成DataInfo<number>即可
-  const cookieString = JSON.stringify({ accessToken, expires, refreshToken });
+  const cookieString = JSON.stringify({ token, expires, refreshToken });
 
   expires > 0
     ? Cookies.set(TokenKey, cookieString, {
