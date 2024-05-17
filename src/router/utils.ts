@@ -213,6 +213,11 @@ function initRouter() {
     return new Promise(resolve => {
       getAsyncRoutes().then(({ data }) => {
         data.map(item => {
+          if (item.children && item.children.length > 0) {
+            item.children.map(child => {
+              child.path = child.component;
+            });
+          }
           if (item.name.includes("gitee")) {
             item.path = "/gitee";
           }

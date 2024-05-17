@@ -163,9 +163,8 @@ onBeforeUnmount(() => {
                 >
                   <template v-slot:append>
                     <img
-                      class="CaptImage"
+                      class="max-w-[120px] h-[40px]"
                       :src="imgCode"
-                      style=" max-width: 120px;height: 40px"
                       @click="getCaptImage"
                     />
                   </template>

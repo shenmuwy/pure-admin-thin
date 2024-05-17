@@ -136,6 +136,9 @@ class PureHttp {
           PureHttp.initConfig.beforeResponseCallback(response);
           return response.data;
         }
+        if (response.data.code === 401) {
+          useUserStoreHook().logOut();
+        }
         return response.data;
       },
       (error: PureHttpError) => {

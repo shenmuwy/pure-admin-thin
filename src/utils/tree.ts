@@ -140,6 +140,7 @@ export const handleTree = (
   parentId?: string,
   children?: string
 ): any => {
+  console.log(data);
   if (!Array.isArray(data)) {
     console.warn("data must be an array");
     return [];
@@ -184,5 +185,6 @@ export const handleTree = (
       }
     }
   }
+
   return tree;
 };
