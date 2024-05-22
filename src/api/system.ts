@@ -37,8 +37,13 @@ export const getMenuList = (data?: object) => {
 };
 
 /** 获取系统管理-部门管理列表 */
-export const getDeptList = (data?: object) => {
+export const getUserDeptTree = (data?: object) => {
   return http.request<Result>("get", "/system/user/deptTree", { data });
+};
+
+/** 获取系统管理-部门管理列表 */
+export const getDeptList = (data?: object) => {
+  return http.request<Result>("get", "/system/dept/list", { data });
 };
 
 /** 获取系统监控-在线用户列表 */

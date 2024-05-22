@@ -19,7 +19,7 @@ import {
 } from "@pureadmin/utils";
 import {
   getRoleIds,
-  getDeptList,
+  getUserDeptTree,
   getUserList
   // getAllRoleList
 } from "@/api/system";
@@ -521,7 +521,7 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
     onSearch();
 
     // 归属部门
-    const { data } = await getDeptList();
+    const { data } = await getUserDeptTree();
     const deptArr = dg(data);
     higherDeptOptions.value = handleTree(deptArr);
     treeData.value = handleTree(deptArr);
