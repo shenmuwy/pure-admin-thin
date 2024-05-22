@@ -13,8 +13,14 @@ export function usePublicHooks() {
   });
 
   const tagStyle = computed(() => {
-    return (status: string) => {
-      return status === "0"
+    return (status: string | number) => {
+      let flag;
+      if (typeof status === "number") {
+        flag = status.toString();
+      } else {
+        flag = status;
+      }
+      return flag === "0"
         ? {
             "--el-tag-text-color": isDark.value ? "#6abe39" : "#389e0d",
             "--el-tag-bg-color": isDark.value ? "#172412" : "#f6ffed",

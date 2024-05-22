@@ -63,7 +63,19 @@ export const getLoginLogsList = (data?: object) => {
 
 /** 获取系统监控-操作日志列表 */
 export const getOperationLogsList = (data?: object) => {
-  return http.request<ResultTable>("post", "/operation-logs", { data });
+  return http.request<ResultTable>("get", "/monitor/operlog/list", { data });
+};
+
+/** 获取系统监控-清空日志列表 */
+export const deleteOperationClean = (data?: object) => {
+  return http.request<ResultTable>("delete", "/monitor/operlog/clean", {
+    data
+  });
+};
+
+/** 获取系统监控-批量清空日志列表 */
+export const deleteOperation = (ids?: string) => {
+  return http.request<ResultTable>("delete", `/monitor/operlog/${ids}`);
 };
 
 /** 获取系统监控-系统日志列表 */
