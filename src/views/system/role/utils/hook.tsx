@@ -106,7 +106,7 @@ export function useRole(treeRef: Ref) {
       `确认要<strong>${
         row.status === 0 ? "停用" : "启用"
       }</strong><strong style='color:var(--el-color-primary)'>${
-        row.name
+        row.roleName
       }</strong>吗?`,
       "系统提示",
       {
@@ -139,7 +139,7 @@ export function useRole(treeRef: Ref) {
         }, 300);
       })
       .catch(() => {
-        row.status === 0 ? (row.status = 1) : (row.status = 0);
+        row.status === "0" ? (row.status = "1") : (row.status = "0");
       });
   }
 

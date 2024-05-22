@@ -224,7 +224,7 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
         }, 300);
       })
       .catch(() => {
-        row.status === 0 ? (row.status = 1) : (row.status = 0);
+        row.status === "0" ? (row.status = "1") : (row.status = "0");
       });
   }
 
