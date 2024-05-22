@@ -28,7 +28,7 @@ export const getRoleIds = (data?: object) => {
 
 /** 获取系统管理-角色管理列表 */
 export const getRoleList = (data?: object) => {
-  return http.request<ResultTable>("post", "/role", { data });
+  return http.request<ResultTable>("get", "/system/role/list", { data });
 };
 
 /** 获取系统管理-菜单管理列表 */
