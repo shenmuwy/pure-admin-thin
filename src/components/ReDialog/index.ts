@@ -14,6 +14,7 @@ const dialogStore = ref<Array<DialogOptions>>([]);
 
 /** 打开弹框 */
 const addDialog = (options: DialogOptions) => {
+  console.log(options);
   const open = () =>
     dialogStore.value.push(Object.assign(options, { visible: true }));
   if (options?.openDelay) {
