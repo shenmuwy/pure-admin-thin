@@ -146,7 +146,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="project">
+  <div class="project bg-bg_color">
     <div class="project_search">
       <div class="project_search_new">
         <el-button type="primary" :icon="Plus">新建项目</el-button>

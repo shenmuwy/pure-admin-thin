@@ -201,7 +201,8 @@ const transitionMain = defineComponent({
   /* height: 100%; */
   height: calc(100% - 30px);
   margin: 24px;
-  background-color: #fff;
+
+  /* background-color: #fff; */
   border-radius: 4px;
 }
 </style>
