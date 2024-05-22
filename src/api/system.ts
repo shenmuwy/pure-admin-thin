@@ -48,7 +48,12 @@ export const getDeptList = (data?: object) => {
 
 /** 获取系统监控-在线用户列表 */
 export const getOnlineLogsList = (data?: object) => {
-  return http.request<ResultTable>("post", "/online-logs", { data });
+  return http.request<ResultTable>("get", "/monitor/online/list", { data });
+};
+
+/** 获取系统监控-在线用户列表 */
+export const getMonitorOnline = (token?: string) => {
+  return http.request<ResultTable>("delete", `/monitor/online/${token}`);
 };
 
 /** 获取系统监控-登录日志列表 */
