@@ -199,7 +199,7 @@ declare global {
    */
   interface ResData {
     code?: number;
-    message?: string;
+    msg?: string;
     data?: Object;
   }
 }

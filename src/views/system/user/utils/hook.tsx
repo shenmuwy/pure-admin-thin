@@ -40,14 +40,17 @@ import {
   reactive,
   onMounted
 } from "vue";
+import { changeStatus, createUser, deleteUser, modUser } from "@/api/user";
 
 export function useUser(tableRef: Ref, treeRef: Ref) {
   const form = reactive({
     // 左侧部门树的id
-    deptId: "",
-    username: "",
-    phone: "",
-    status: ""
+    pageNum: 1,
+    pageSize: 10,
+    deptId: undefined,
+    userName: undefined,
+    phonenumber: undefined,
+    status: undefined
   });
   const formRef = ref();
   const ruleFormRef = ref();
@@ -110,10 +113,10 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
       cellRenderer: ({ row, props }) => (
         <el-tag
           size={props.size}
-          type={row.sex === 1 ? "danger" : null}
+          type={row.sex === "1" ? "danger" : null}
           effect="plain"
         >
-          {row.sex === 1 ? "女" : "男"}
+          {row.sex === "1" ? "女" : "男"}
         </el-tag>
       )
     },
@@ -202,7 +205,7 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
         draggable: true
       }
     )
-      .then(() => {
+      .then(async () => {
         switchLoadMap.value[index] = Object.assign(
           {},
           switchLoadMap.value[index],
@@ -210,18 +213,27 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
             loading: true
           }
         );
-        setTimeout(() => {
-          switchLoadMap.value[index] = Object.assign(
-            {},
-            switchLoadMap.value[index],
-            {
-              loading: false
-            }
-          );
+        const { code, msg } = await changeStatus({
+          status: row.status,
+          userId: row.userId
+        });
+        if (code === 200) {
           message("已成功修改用户状态", {
             type: "success"
           });
-        }, 300);
+        } else {
+          row.status === "0" ? (row.status = "1") : (row.status = "0");
+          message(msg, {
+            type: "error"
+          });
+        }
+        switchLoadMap.value[index] = Object.assign(
+          {},
+          switchLoadMap.value[index],
+          {
+            loading: false
+          }
+        );
       })
       .catch(() => {
         row.status === "0" ? (row.status = "1") : (row.status = "0");
@@ -232,17 +244,24 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
     console.log(row);
   }
 
-  function handleDelete(row) {
-    message(`您删除了用户编号为${row.userId}的这条数据`, { type: "success" });
-    onSearch();
+  async function handleDelete(row) {
+    const { code } = await deleteUser(row.userId);
+    if (code === 200) {
+      message(`您删除了用户编号为${row.userId}的这条数据`, { type: "success" });
+      onSearch();
+    } else {
+      message(`删除用户编号为${row.userId}失败`, { type: "error" });
+    }
   }
 
   function handleSizeChange(val: number) {
-    console.log(`${val} items per page`);
+    form.pageSize = val;
+    onSearch();
   }
 
   function handleCurrentChange(val: number) {
-    console.log(`current page: ${val}`);
+    form.pageNum = val;
+    onSearch();
   }
 
   /** 当CheckBox选择项发生变化时会触发该事件 */
@@ -260,25 +279,31 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
   }
 
   /** 批量删除 */
-  function onbatchDel() {
+  async function onbatchDel() {
     // 返回当前选中的行
     const curSelected = tableRef.value.getTableRef().getSelectionRows();
     // 接下来根据实际业务，通过选中行的某项数据，比如下面的id，调用接口进行批量删除
-    message(`已删除用户编号为 ${getKeyList(curSelected, "id")} 的数据`, {
-      type: "success"
-    });
-    tableRef.value.getTableRef().clearSelection();
-    onSearch();
+    const { code, msg } = await deleteUser(
+      getKeyList(curSelected, "userId").toString()
+    );
+    if (code === 200) {
+      message(`已删除用户编号为 ${getKeyList(curSelected, "userId")} 的数据`, {
+        type: "success"
+      });
+      tableRef.value.getTableRef().clearSelection();
+      onSearch();
+    } else {
+      message(msg, { type: "error" });
+    }
   }
 
   async function onSearch() {
     loading.value = true;
     let { rows, total } = await getUserList(toRaw(form));
-    rows.map(item => (item.sex = Number(item.sex)));
     dataList.value = rows;
     pagination.total = total;
-    pagination.pageSize = 10;
-    pagination.currentPage = 1;
+    pagination.pageSize = form.pageSize;
+    // pagination.currentPage = 1;
 
     setTimeout(() => {
       loading.value = false;
@@ -288,7 +313,7 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
   const resetForm = formEl => {
     if (!formEl) return;
     formEl.resetFields();
-    form.deptId = "";
+    form.deptId = undefined;
     treeRef.value.onTreeReset();
     onSearch();
   };
@@ -317,15 +342,16 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
         formInline: {
           title,
           higherDeptOptions: formatHigherDeptOptions(higherDeptOptions.value),
-          parentId: row?.dept.id ?? 0,
-          nickname: row?.nickName ?? "",
-          username: row?.userName ?? "",
-          password: row?.password ?? "",
-          phone: row?.phonenumber ?? "",
+          deptId: row?.dept?.deptId ?? 0,
+          nickName: row?.nickName ?? "",
+          userName: row?.userName ?? "",
+          password: row?.password ?? "123456",
+          phonenumber: row?.phonenumber ?? "",
           email: row?.email ?? "",
           sex: row?.sex ?? "",
-          status: row?.status ?? 1,
-          remark: row?.remark ?? ""
+          status: row?.status ?? "0",
+          remark: row?.remark ?? "",
+          userId: row?.userId
         }
       },
       width: "46%",
@@ -337,12 +363,26 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
       beforeSure: (done, { options }) => {
         const FormRef = formRef.value.getRef();
         const curData = options.props.formInline as FormItemProps;
-        function chores() {
-          message(`您${title}了用户名称为${curData.userName}的这条数据`, {
-            type: "success"
-          });
-          done(); // 关闭弹框
-          onSearch(); // 刷新表格数据
+        async function chores() {
+          let res;
+          if (title === "新增") {
+            res = await createUser(curData);
+          } else {
+            res = await modUser(curData);
+          }
+          console.log(res);
+
+          if (res.code === 200) {
+            message(`您${title}了用户名称为${curData.userName}的这条数据`, {
+              type: "success"
+            });
+            done(); // 关闭弹框
+            onSearch(); // 刷新表格数据
+          } else {
+            message(res.msg, {
+              type: "error"
+            });
+          }
         }
         FormRef.validate(valid => {
           if (valid) {
@@ -452,7 +492,7 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
         ruleFormRef.value.validate(valid => {
           if (valid) {
             // 表单规则校验通过
-            message(`已成功重置 ${row.username} 用户的密码`, {
+            message(`已成功重置 ${row.userName} 用户的密码`, {
               type: "success"
             });
             console.log(pwdForm.newPwd);
@@ -470,11 +510,11 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
     // 选中的角色列表
     const ids = (await getRoleIds({ userId: row.id })).data ?? [];
     addDialog({
-      title: `分配 ${row.username} 用户的角色`,
+      title: `分配 ${row.userName} 用户的角色`,
       props: {
         formInline: {
-          username: row?.username ?? "",
-          nickname: row?.nickname ?? "",
+          userName: row?.userName ?? "",
+          nickName: row?.nickName ?? "",
           roleOptions: roleOptions.value ?? [],
           ids
         }

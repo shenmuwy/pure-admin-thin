@@ -40,3 +40,25 @@ export const refreshTokenApi = (data?: object) => {
 export const getCaptchaImage = () => {
   return http.request<CaptchaImageResult>("get", "/captchaImage");
 };
+
+/** 新增用户 */
+export const createUser = (data?: object) => {
+  return http.request<RefreshTokenResult>("post", "/system/user", { data });
+};
+
+/** 修改用户 */
+export const modUser = (data?: object) => {
+  return http.request<RefreshTokenResult>("put", "/system/user", { data });
+};
+
+/** 删除用户 */
+export const deleteUser = (ids?: string) => {
+  return http.request<RefreshTokenResult>("delete", "/system/user/" + ids);
+};
+
+/** 修改用户状态 */
+export const changeStatus = (data?: object) => {
+  return http.request<RefreshTokenResult>("put", "/system/user/changeStatus", {
+    data
+  });
+};
