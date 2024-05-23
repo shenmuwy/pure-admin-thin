@@ -6,7 +6,7 @@ import { FormProps } from "./utils/types";
 const props = withDefaults(defineProps<FormProps>(), {
   formInline: () => ({
     roleName: "",
-    roleKeyroleKey: "",
+    roleKey: "",
     remark: ""
   })
 });
