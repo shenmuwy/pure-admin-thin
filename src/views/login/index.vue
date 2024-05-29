@@ -58,7 +58,7 @@ const onLogin = async (formEl: FormInstance | undefined) => {
             });
           } else {
             getCaptImage();
-            message("登录失败", { type: "error" });
+            message(res.msg, { type: "error" });
           }
         })
         .finally(() => (loading.value = false));
@@ -111,10 +111,12 @@ onBeforeUnmount(() => {
       </div>
       <div class="login-box">
         <div class="login-form">
-          <avatar class="avatar" />
-          <Motion>
+          <div class="flex justify-center">
+            <avatar class="avatar" />
+          </div>
+          <!-- <Motion>
             <h2 class="outline-none">{{ title }}</h2>
-          </Motion>
+          </Motion> -->
 
           <el-form
             ref="ruleFormRef"
