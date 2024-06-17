@@ -1,6 +1,6 @@
 {
-  "RequestUrl": "capd.server.chindeo.test",
-  "PrefixUrl": "/api",
+  "RequestUrl": "10.0.0.35:8080",
+  "PrefixUrl": "",
   "Version": "5.6.0",
   "Title": "中徳澳",
   "FixedHeader": true,
