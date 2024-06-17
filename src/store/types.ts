@@ -45,3 +45,7 @@ export type userType = {
   isRemembered?: boolean;
   loginDay?: number;
 };
+
+export type dictType = {
+  dict: any[];
+};

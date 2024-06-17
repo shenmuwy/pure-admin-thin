@@ -178,6 +178,7 @@ declare global {
     $echarts: ECharts;
     $storage: ResponsiveStorage;
     $config: PlatformConfigs;
+    $useDict: any;
   }
 
   /**

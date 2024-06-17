@@ -8,6 +8,8 @@ import { createApp, type Directive } from "vue";
 import { useElementPlus } from "@/plugins/elementPlus";
 import { injectResponsiveStorage } from "@/utils/responsive";
 
+import { useDict } from "@/utils/dict";
+
 import Table from "@pureadmin/table";
 // import PureDescriptions from "@pureadmin/descriptions";
 
@@ -36,9 +38,12 @@ import {
   IconifyIconOnline,
   FontIcon
 } from "./components/ReIcon";
+// 字典标签组件
+import DictTag from "@/components/DictTag/index.vue";
 app.component("IconifyIconOffline", IconifyIconOffline);
 app.component("IconifyIconOnline", IconifyIconOnline);
 app.component("FontIcon", FontIcon);
+app.component("DictTag", DictTag);
 
 // 全局注册按钮级别权限组件
 import { Auth } from "@/components/ReAuth";
@@ -49,6 +54,8 @@ import "tippy.js/dist/tippy.css";
 import "tippy.js/themes/light.css";
 import VueTippy from "vue-tippy";
 app.use(VueTippy);
+
+app.config.globalProperties.$useDict = useDict;
 
 getPlatformConfig(app).then(async config => {
   setupStore(app);

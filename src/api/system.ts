@@ -11,6 +11,20 @@ type ResultTable = {
   total?: number;
 };
 
+interface DictTypeResult extends ResData {
+  data: {
+    map(
+      arg0: (p: any) => {
+        label: any;
+        value: any;
+        elTagType: any;
+        elTagClass: any;
+      }
+    ): any;
+    dictType: string;
+  };
+}
+
 /** 获取系统管理-用户管理列表 */
 export const getUserList = (params?: object) => {
   return http.request<ResultTable>("get", "/system/user/list", { params });
@@ -96,4 +110,37 @@ export const getRoleMenu = (data?: object) => {
 /** 获取角色管理-权限-菜单权限-根据角色 id 查对应菜单 */
 export const getRoleMenuIds = (data?: object) => {
   return http.request<Result>("post", "/role-menu-ids", { data });
+};
+
+/** 查询字典类型列表 */
+export const getDictTypeList = (params?: object) => {
+  return http.request<ResultTable>("get", "/system/dict/type/list", { params });
+};
+
+/** 查询字典详情列表 */
+export const getDictDataList = (params?: object) => {
+  return http.request<ResultTable>("get", "/system/dict/data/list", { params });
+};
+
+/** 获取字典选择框列表 */
+export const optionselect = () => {
+  return http.request<Result>("get", "/system/dict/type/optionselect");
+};
+
+/** 获取字典选择框列表 */
+export const getType = (dictId: string) => {
+  return http.request<DictTypeResult>("get", "/system/dict/type/" + dictId);
+};
+
+/** 根据字典类型查询字典数据信息 */
+export const getDicts = (dictType: string) => {
+  return http.request<DictTypeResult>(
+    "get",
+    "/system/dict/data/type/" + dictType
+  );
+};
+
+/** 根据字典类型查询字典数据信息 */
+export const putDicts = (data: object) => {
+  return http.request<DictTypeResult>("put", "/system/dict/data", { data });
 };
